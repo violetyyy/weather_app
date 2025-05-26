@@ -3,9 +3,9 @@ import { MapPin, House, Heart, User } from "lucide-react";
 const Card = (props) => {
   return (
     <div
-      className={`h-[828px] w-[414px] bg-${props.background} opacity-[0.75]  rounded-[48px] shadow-xl px-[48px] py-[56px] flex-col flex justify-between z-10`}
+      className={`h-[828px] w-[414px] bg-${props.background}  rounded-[48px] shadow-xl px-[48px] py-[56px] flex-col flex justify-between z-10 backdrop-blur-lg`}
     >
-      <div className="flex items-center justify-between backdrop-blur-lg">
+      <div className="flex items-center justify-between ">
         <div className="flex flex-col justify-start">
           <p className={` text-${props.date_text} text-[18px] font-semibold`}>
             {props.date}
@@ -28,12 +28,7 @@ const Card = (props) => {
       <div>
         <h1
           className="text-transparent bg-clip-text font-extrabold text-[144px]"
-          style={{
-            background:
-              "var(--Cool-Gray-Gradient, linear-gradient(180deg, #111827 0%, #6B7280 100%))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
+          style={props.style}
         >
           {props.temp}
         </h1>

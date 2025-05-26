@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import Card from "@/components/Card";
 import { useEffect, useState } from "react";
+import { MapPin, House, Heart, User } from "lucide-react";
 
 const weatherApiKey = "899d9c2c0f5845838dc70138240912";
 
@@ -46,7 +47,7 @@ export default function Home() {
       const filtered = cityList.filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
-      setFilteredCities(filtered.slice(0, 10));
+      setFilteredCities(filtered.slice(0, 5));
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
@@ -54,7 +55,13 @@ export default function Home() {
   };
 
   const handleSelectCity = (cityString) => {
-    const city = cityString.split(",")[0];
+    let city = "";
+    for (let i = 0; i < cityString.length; i++) {
+      const char = cityString[i];
+      if (char === ",") break;
+      city += char;
+    }
+
     setCityName(city);
     setSearchInput(cityString);
     setShowSuggestions(false);
@@ -63,7 +70,7 @@ export default function Home() {
   return (
     <div className="flex bg-[#F3F4F6]">
       <div className="h-screen w-[50%] bg-[#F3F4F6] relative flex items-center justify-center">
-        <div className="absolute bg-white w-[567px] px-6 py-4 rounded-[48px] flex flex-col gap-2 top-[46px] z-10 left-[190px]">
+        <div className="absolute bg-white w-[512px] px-6 py-4 rounded-[48px] flex flex-col gap-2 top-[46px] z-10 left-[190px]">
           <div className="flex items-center gap-4">
             <Search color="#6B7280" size="42px" />
             <input
@@ -75,20 +82,24 @@ export default function Home() {
               onFocus={() => setShowSuggestions(true)}
             />
           </div>
-          {showSuggestions && filteredCities.length > 0 && (
-            <ul className="mt-2 overflow-y-auto bg-white border rounded-lg shadow-lg max-h-64">
-              {filteredCities.map((city, index) => (
+        </div>
+
+        {showSuggestions && filteredCities.length > 0 && (
+          <ul className="absolute z-20 py-[16px] overflow-y-auto bg-white opacity-[1] rounded-[24px] max-h-64 left-[190px] top-[120px] w-[512px] backdrop-blur-[32px] px-[16px] mt-2">
+            {filteredCities.map((city, index) => (
+              <div className="flex items-center gap-4">
+                <MapPin color="gray" />
                 <li
                   key={index}
-                  className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-2 font-bold cursor-pointer text-[20px] w-full hover:bg-gray-100"
                   onClick={() => handleSelectCity(city)}
                 >
                   {city}
                 </li>
-              ))}
-            </ul>
-          )}
-        </div>
+              </div>
+            ))}
+          </ul>
+        )}
 
         <div className="h-[340px] border-gray-300 border w-[340px] rounded-full absolute right-[-170px]"></div>
         <div className="h-[540px] border-gray-300 border w-[540px] rounded-full absolute right-[-270px]"></div>
@@ -101,7 +112,7 @@ export default function Home() {
         />
 
         <Card
-          background="white"
+          background="[#111827]"
           image="/images/sun.png"
           temp={`${weatherData?.current?.temp_c}`}
           date={`${weatherData?.current?.last_updated}`}
@@ -111,6 +122,12 @@ export default function Home() {
           location_text="black"
           pin_color="black"
           state_color="#FF8E27"
+          style={{
+            background:
+              "var(--Cool-Gray-Gradient, linear-gradient(180deg, #111827 0%, #6B7280 100%))",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
         />
       </div>
 
@@ -118,7 +135,9 @@ export default function Home() {
         <div className="h-[340px] border-gray-300 border w-[340px] rounded-full absolute left-[-170px]"></div>
         <div className="h-[540px] border-gray-300 border w-[540px] rounded-full absolute left-[-270px]"></div>
         <div className="h-[940px] border-gray-300 border w-[940px] rounded-full absolute left-[-470px]"></div>
-        <div className="h-[140px] w-[140px] bg-[#F3F4F6] absolute left-[-70px] rounded-full"></div>
+        <div className="h-[140px] w-[140px] bg-[#F3F4F6] absolute left-[-70px] rounded-full flex justify-center items-center">
+          <img src="/images/Vector.svg" className="h-[120px] z-20" />
+        </div>
 
         <img
           src="/images/blur-moon.svg"
@@ -131,11 +150,16 @@ export default function Home() {
           temp={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.temp_c}`}
           date={`${weatherData?.current?.last_updated}`}
           location={`${weatherData?.location?.name}`}
-          state={`${weatherData?.current?.condition?.text}`}
+          state={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.condition.text}`}
           date_text="[#9CA3AF]"
           location_text="white"
           pin_color="white"
           state_color="#777CCE"
+          style={{
+            background: "linear-gradient(0deg, #3398DB, #DDE6E8)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
         />
       </div>
     </div>
