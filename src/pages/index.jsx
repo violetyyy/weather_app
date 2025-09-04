@@ -67,100 +67,129 @@ export default function Home() {
     setShowSuggestions(false);
   };
 
-  return (
-    <div className="flex bg-[#F3F4F6]">
-      <div className="h-screen w-[50%] bg-[#F3F4F6] relative flex items-center justify-center">
-        <div className="absolute bg-white w-[512px] px-6 py-4 rounded-[48px] flex flex-col gap-2 top-[46px] z-10 left-[190px]">
-          <div className="flex items-center gap-4">
-            <Search color="#6B7280" size="42px" />
-            <input
-              type="text"
-              className="w-full text-2xl font-bold outline-0"
-              placeholder="Search city..."
-              value={searchInput}
-              onChange={handleInputChange}
-              onFocus={() => setShowSuggestions(true)}
-            />
-          </div>
-        </div>
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.search-container')) {
+      setShowSuggestions(false);
+    }
+  };
 
-        {showSuggestions && filteredCities.length > 0 && (
-          <ul className="absolute z-20 py-[16px] overflow-y-auto bg-white opacity-[1] rounded-[24px] max-h-64 left-[190px] top-[120px] w-[512px] backdrop-blur-[32px] px-[16px] mt-2">
-            {filteredCities.map((city, index) => (
-              <div className="flex items-center gap-4">
-                <MapPin color="gray" />
-                <li
-                  key={index}
-                  className="px-4 py-2 font-bold cursor-pointer text-[20px] w-full hover:bg-gray-100"
+  // Add click outside listener
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="flex min-h-screen bg-[#F3F4F6]">
+      {/* Left Side - Day Weather */}
+      <div className="relative w-1/2 bg-[#F3F4F6] flex items-center justify-center overflow-hidden">
+        {/* Search Bar - Fixed at top */}
+        <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-50 search-container">
+          <div className="bg-white w-[480px] px-6 py-4 rounded-[32px] shadow-lg border border-gray-100">
+            <div className="flex items-center gap-4">
+              <Search color="#6B7280" size="24px" />
+              <input
+                type="text"
+                className="w-full text-xl font-semibold outline-none placeholder-gray-400"
+                placeholder="Search city..."
+                value={searchInput}
+                onChange={handleInputChange}
+                onFocus={() => setShowSuggestions(true)}
+              />
+            </div>
+          </div>
+
+          {/* Search Suggestions */}
+          {showSuggestions && filteredCities.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[24px] shadow-xl border border-gray-100 max-h-64 overflow-y-auto z-50">
+              {filteredCities.map((city, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                   onClick={() => handleSelectCity(city)}
                 >
-                  {city}
-                </li>
-              </div>
-            ))}
-          </ul>
-        )}
-
-        <div className="h-[340px] border-gray-300 border w-[340px] rounded-full absolute right-[-170px]"></div>
-        <div className="h-[540px] border-gray-300 border w-[540px] rounded-full absolute right-[-270px]"></div>
-        <div className="h-[940px] border-gray-300 border w-[940px] rounded-full absolute right-[-470px]"></div>
-        <div className="h-[140px] w-[140px] bg-[#F3F4F6] absolute right-[-70px] rounded-full"></div>
-
-        <img
-          src="/images/blur-sun.svg"
-          className="absolute right-[660px] top-[60px] z-0"
-        />
-
-        <Card
-          background="[#111827]"
-          image="/images/sun.png"
-          temp={`${weatherData?.current?.temp_c}`}
-          date={`${weatherData?.current?.last_updated}`}
-          location={`${weatherData?.location?.name}`}
-          state={`${weatherData?.current?.condition?.text}`}
-          date_text="[#6B7280]"
-          location_text="black"
-          pin_color="black"
-          state_color="#FF8E27"
-          style={{
-            background:
-              "var(--Cool-Gray-Gradient, linear-gradient(180deg, #111827 0%, #6B7280 100%))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        />
-      </div>
-
-      <div className="w-[50%] bg-[#0F141E] relative flex items-center justify-center bg-center bg-cover">
-        <div className="h-[340px] border-gray-300 border w-[340px] rounded-full absolute left-[-170px]"></div>
-        <div className="h-[540px] border-gray-300 border w-[540px] rounded-full absolute left-[-270px]"></div>
-        <div className="h-[940px] border-gray-300 border w-[940px] rounded-full absolute left-[-470px]"></div>
-        <div className="h-[140px] w-[140px] bg-[#F3F4F6] absolute left-[-70px] rounded-full flex justify-center items-center">
-          <img src="/images/Vector.svg" className="h-[120px] z-20" />
+                  <MapPin color="#6B7280" size="16px" />
+                  <span className="font-medium text-gray-700">{city}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
+        {/* Background Circles */}
+        <div className="absolute right-[-170px] h-[340px] w-[340px] border border-gray-300 rounded-full opacity-30"></div>
+        <div className="absolute right-[-270px] h-[540px] w-[540px] border border-gray-300 rounded-full opacity-30"></div>
+        <div className="absolute right-[-470px] h-[940px] w-[940px] border border-gray-300 rounded-full opacity-30"></div>
+        <div className="absolute right-[-70px] h-[140px] w-[140px] bg-[#F3F4F6] rounded-full"></div>
+
+        {/* Background Image */}
         <img
-          src="/images/blur-moon.svg"
-          className="absolute left-[660px] bottom-[60px]"
+          src="/images/blur-sun.svg"
+          className="absolute right-[660px] top-[60px] z-0 opacity-60"
+          alt=""
         />
 
-        <Card
-          background="[#111827]"
-          image="/images/moon.png"
-          temp={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.temp_c}`}
-          date={`${weatherData?.current?.last_updated}`}
-          location={`${weatherData?.location?.name}`}
-          state={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.condition.text}`}
-          date_text="[#9CA3AF]"
-          location_text="white"
-          pin_color="white"
-          state_color="#777CCE"
-          style={{
-            background: "linear-gradient(0deg, #3398DB, #DDE6E8)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
+        {/* Day Weather Card */}
+        <div className="relative z-10">
+          <Card
+            background="[#111827]"
+            image="/images/sun.png"
+            temp={`${weatherData?.current?.temp_c || '--'}°`}
+            date={`${weatherData?.current?.last_updated || 'Loading...'}`}
+            location={`${weatherData?.location?.name || 'Ulaanbaatar'}`}
+            state={`${weatherData?.current?.condition?.text || 'Clear'}`}
+            date_text="#FF8E27"
+            location_text="#FF8E27"
+            pin_color="#FF8E27"
+            state_color="#FF8E27"
+            style={{
+              background: "linear-gradient(180deg, #111827 0%, #6B7280 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Right Side - Night Weather */}
+      <div className="relative w-1/2 bg-[#0F141E] flex items-center justify-center overflow-hidden">
+        {/* Background Circles */}
+        <div className="absolute left-[-170px] h-[340px] w-[340px] border border-gray-600 rounded-full opacity-30"></div>
+        <div className="absolute left-[-270px] h-[540px] w-[540px] border border-gray-600 rounded-full opacity-30"></div>
+        <div className="absolute left-[-470px] h-[940px] w-[940px] border border-gray-600 rounded-full opacity-30"></div>
+        <div className="absolute left-[-70px] h-[140px] w-[140px] bg-[#F3F4F6] rounded-full flex justify-center items-center">
+          <img src="/images/Vector.svg" className="h-[120px] z-20" alt="" />
+        </div>
+
+        {/* Background Image */}
+        <img
+          src="/images/blur-moon.svg"
+          className="absolute left-[660px] bottom-[60px] opacity-60"
+          alt=""
         />
+
+        {/* Night Weather Card */}
+        <div className="relative z-10">
+          <Card
+            background="[#111827]"
+            image="/images/moon.png"
+            temp={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.temp_c || '--'}°`}
+            date={`${weatherData?.current?.last_updated || 'Loading...'}`}
+            location={`${weatherData?.location?.name || 'Ulaanbaatar'}`}
+            state={`${weatherData?.forecast?.forecastday?.[0]?.hour?.[23]?.condition?.text || 'Clear'}`}
+            date_text="#9CA3AF"
+            location_text="#FFFFFF"
+            pin_color="#FFFFFF"
+            state_color="#777CCE"
+            style={{
+              background: "linear-gradient(0deg, #3398DB, #DDE6E8)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          />
+        </div>
       </div>
     </div>
   );
